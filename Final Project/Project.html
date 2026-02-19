@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+<canvas id="gl-canvas" width="512" height="512"> </canvas>
+
+<br><br>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+#version 300 es
+
+
+in vec4 aPosition;
+in vec4 aColor;
+in vec2 aTexCoord;
+
+out vec4 vColor;
+out vec2 vTexCoord;
+
+uniform mat4 uModelMatrix;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+
+void main()
+{
+    vColor = aColor;
+	vTexCoord = aTexCoord;
+	gl_Position = projectionMatrix*modelViewMatrix * aPosition;
+	
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+#version 300 es
+
+precision mediump float;
+
+in vec4 vColor;
+in vec2 vTexCoord;
+out vec4 fColor;
+uniform sampler2D uTextureMap;
+uniform bool useTexture;
+
+void
+main()
+{
+	if (useTexture) {
+        fColor = texture(uTextureMap, vTexCoord);  // Use texture
+    } else {
+        fColor = vColor;  // Use color
+    }
+}
+</script>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec3 vNormal;
+    
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+    uniform mat3 normalMatrix;
+    
+    varying vec3 fNormal;
+    varying vec3 fPosition;
+    
+    void main() {
+        fPosition = vec3(modelViewMatrix * vPosition);
+        fNormal = normalize(normalMatrix * vNormal);
+        gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+    }
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+    
+    uniform vec4 lightPosition;
+    uniform vec4 lightAmbient;
+    uniform vec4 lightDiffuse;
+    uniform vec4 lightSpecular;
+    
+    uniform vec4 materialAmbient;
+    uniform vec4 materialDiffuse;
+    uniform vec4 materialSpecular;
+    uniform float materialShininess;
+    
+    varying vec3 fNormal;
+    varying vec3 fPosition;
+    
+    void main() {
+        vec3 normal = normalize(fNormal);
+        vec3 lightDir = normalize(vec3(lightPosition) - fPosition);
+        vec3 viewDir = normalize(-fPosition);
+    
+        // Ambient component
+        vec4 ambient = lightAmbient * materialAmbient;
+    
+        // Diffuse component
+        float nDotL = max(dot(normal, lightDir), 0.0);
+        vec4 diffuse = lightDiffuse * materialDiffuse * nDotL;
+    
+        // Specular component
+        vec3 reflectDir = reflect(-lightDir, normal);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
+        vec4 specular = lightSpecular * materialSpecular * spec;
+    
+        // Final color
+        gl_FragColor = ambient + diffuse + specular;
+        
+    }
+</script>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+    #version 300 es
+    
+    in  vec4 aPosition;
+    in  vec3 aNormal;
+    in  vec4 aColor;
+    out vec4 vColor;
+    
+    
+    uniform vec4 uAmbientProduct, uDiffuseProduct, uSpecularProduct;
+    uniform mat4 uModelMatrix;
+    uniform mat4 uViewMatrix;
+    uniform mat4 uProjectionMatrix;
+    uniform vec4 uLightPosition;
+    uniform float uShininess;
+    uniform vec3 eye;
+    
+    void main()
+    {
+    
+    
+      vec3 pos = (uModelMatrix * aPosition).xyz;
+    
+        //fixed light postion
+        vec3 light = uLightPosition.xyz;
+        vec3 L = normalize(light - pos);
+    
+    
+          vec3 E = normalize(eye);
+        vec3 H = normalize(L + E);
+    
+        vec4 NN = vec4(aNormal,0);
+    
+        // Transform vertex normal into eye coordinates
+    
+        vec3 N = normalize((uModelMatrix*NN).xyz);
+    
+        // Compute terms in the illumination equation
+        vec4 ambient = uAmbientProduct;
+    
+        float Kd = max(dot(L, N), 0.0);
+        vec4  diffuse = Kd*uDiffuseProduct;
+    
+        float Ks = pow( max(dot(N, H), 0.0), uShininess );
+        vec4  specular = Ks * uSpecularProduct;
+    
+        gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix *aPosition;
+        vColor = ambient + diffuse +specular;
+    
+        //vColor.a = 1.0;
+        vColor = aColor;
+    
+    
+    }
+    </script>  
+
+<script src="../Common/initShaders.js"></script>
+<script src="../Common/MV.js"></script>
+<script type="text/javascript" src="../Common/geometry.js"></script>
+<script src="Project.js"></script>
+
+<img id = "image1" src = "barrierWall.png" hidden>
+<!-- Image 1 citation pt1: https://duckduckgo.com/?q=horror+video+game+fence+texture&iax=images&ia=images&iai=https%3A%2F%2Fmedia.moddb.com%2Fimages%2Fmods%2F1%2F35%2F34762%2FTyironlg.png -->
+<!-- Image 1 citation pt2: https://www.pngmart.com/files/22/Fog-PNG-Transparent.png -->
+<img id = "image2" src = "GravelTexture.jpg" hidden>
+<!-- Image 2 citation: https://www.textures4photoshop.com/tex/thumbs/stone-ground-pavement-texture-thumb29.jpg -->
+<img id = "image3" src = "dryGrassTexture.jpg" hidden>
+<!-- Image 3 citation: https://www.sketchuptextureclub.com/public/texture/0004-dry-grass-texture-seamless.jpg-->
+<img id = "image4" src = "blackBrickWall.png" hidden>
+<!-- Image 4 citation: https://www.creativefabrica.com/wp-content/uploads/2023/09/17/Black-brick-wall-texture-for-pattern-Graphics-79453489-1.jpg-->
+<img id = "image5" src = "blackBrickWallWindow.png" hidden>
+<!-- Image 5 citation pt1: https://img2.cgtrader.com/items/3958484/16124839df/large/medieval-window-3d-model-low-poly-max-obj-fbx.jpg-->
+<!-- Image 5 citation pt2: https://www.creativefabrica.com/wp-content/uploads/2023/09/17/Black-brick-wall-texture-for-pattern-Graphics-79453489-1.jpg-->
+<img id = "image6" src = "oldBrickWallTexture.jpg" hidden>
+<!-- Image 6 citation: https://static.vecteezy.com/system/resources/previews/001/245/501/large_2x/old-brick-wall-texture-photo.jpg -->
+<img id = "image7" src = "oldBrickWallWindow.png" hidden>
+<!-- Image 7 citation pt1: https://static.vecteezy.com/system/resources/previews/001/245/501/large_2x/old-brick-wall-texture-photo.jpg -->
+<!-- Image 7 citation pt2: https://3.bp.blogspot.com/_5ke3OeOEo0g/TLms-wNMN6I/AAAAAAAACpk/DTivKvLL-uY/s1600/22_wind.jpg-->
+<img id = "image8" src = "woodenFloor.jpg" hidden>
+<!-- Image 8 citation: https://i.pinimg.com/originals/15/eb/7f/15eb7f4ae84a342e50909830186cda7e.jpg -->
+<img id = "image9" src = "woodenCeiling.png" hidden>
+<!-- Image 9 citation: https://www.shutterstock.com/image-photo/dark-wood-texture-horror-background-260nw-496281253.jpg -->
+<img id = "image10" src = "creepyDoor.png" hidden>
+<!-- Image 10 citation: https://img.freepik.com/premium-photo/old-wooden-door-game-assets_863013-42384.jpg -->
+<img id = "image11" src = "shingles.jpg" hidden>
+<!-- Image 11 citation: https://2.bp.blogspot.com/__oT1M2vJ2DE/TN0HrS1suCI/AAAAAAAAAB4/ZLSgEi2kW5E/s1600/shinglesdark.jpg -->
+<img id = "image12" src = "yellowScreen.jpg" hidden>
+<!-- Image 12 citation: https://i.ytimg.com/vi/SX9KYqrTqT4/maxresdefault.jpg -->
+<img id = "image13" src = "helpSign.png" hidden>
+<!-- Image 13 citation: https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/ded86755-974a-4189-9f10-5b748fe3661e/d8ob7c9-600e64e3-b2ab-4792-a713-d3a53f601c04.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwic3ViIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsImF1ZCI6WyJ1cm46c2VydmljZTpmaWxlLmRvd25sb2FkIl0sIm9iaiI6W1t7InBhdGgiOiIvZi9kZWQ4Njc1NS05NzRhLTQxODktOWYxMC01Yjc0OGZlMzY2MWUvZDhvYjdjOS02MDBlNjRlMy1iMmFiLTQ3OTItYTcxMy1kM2E1M2Y2MDFjMDQucG5nIn1dXX0.GZsZ_36_C76Zke8N495tahFQfAvg26hN1fBHOgMYk9U -->
+<img id = "image14" src = "tombStones.png" hidden>
+<!-- Image 14 citations pt1:  https://thumbs.dreamstime.com/z/tombstone-1282585.jpg-->
+<!-- Image 14 citations pt2:  https://i.pinimg.com/originals/2a/35/16/2a35164b3797146a776d0c53d287c6a8.jpg-->
+<!-- Image 14 citations pt3:  https://3.bp.blogspot.com/_5ke3OeOEo0g/TLtwVRuF0rI/AAAAAAAACq0/J4kVplIRNpY/s1600/Grave_5.jpg-->
+<!-- Image 14 citations pt4:  https://2.bp.blogspot.com/_5ke3OeOEo0g/TLtwfNMGeII/AAAAAAAACq4/CljY3f4qyHY/s1600/Grave_6.jpg-->
+<!-- Image 14 citations pt5:  https://1.bp.blogspot.com/_5ke3OeOEo0g/TLtvEptWlDI/AAAAAAAACqo/2LH2IpO-QbM/s1600/Grave_2.jpg-->
+<!-- Image 14 citations pt6:  https://4.bp.blogspot.com/_5ke3OeOEo0g/TLtuQXo03oI/AAAAAAAACqk/z0PcjFnRkbM/s1600/Grave_1.jpg-->
+<!-- Image 14 citations pt7:  https://4.bp.blogspot.com/_5ke3OeOEo0g/TLtuQXo03oI/AAAAAAAACqk/z0PcjFnRkbM/s1600/Grave_3.jpg-->
+<!-- Image 14 citations pt8:  https://p.turbosquid.com/ts-thumb/qR/BPM6Oc/XT/tomb_05/png/1615865851/1920x1080/fit_q87/8acabd5be3d8bf11a4bd6d540082db1f12d56402/tomb_05.jpg-->
+<!-- Image 14 citations pt9:  https://4.bp.blogspot.com/_5ke3OeOEo0g/TLtuQXo03oI/AAAAAAAACqk/z0PcjFnRkbM/s1600/Grave_4.jpg-->
+<img id = "image15" src = "creepyDoor2.png" hidden>
+<img id = "image16" src = "grandfatherClock.jpg" hidden>
+<!-- Image 16 citations pt1:  https://images.furnituredealer.net/img/products/acme_furniture/color/grandfather%20clocks_01402-b.jpg-->
+<img id = "image17" src = "creepyPortraits.png" hidden>
+<!-- Image 17 citations pt1:  https://i.etsystatic.com/10139177/r/il/a34636/5257387548/il_fullxfull.5257387548_8c7q.jpg-->
+<!-- Image 17 citations pt2:  https://i.pinimg.com/originals/b4/b2/dd/b4b2ddb7a62afaa32cb959cc6424272c.jpg-->
+<!-- Image 17 citations pt3:  https://i.pinimg.com/originals/e7/06/94/e70694bb3fb08667b6bc268ce0dbb27c.jpg-->
+<!-- Image 17 citations pt4:  https://georgiafilmartgallery.com/wp-content/uploads/2016/08/Creepy-Family.jpg-->
+<!-- Image 17 citations pt5:  https://i.etsystatic.com/19281907/r/il/c57726/2549804144/il_fullxfull.2549804144_mos0.jpg-->
+<!-- Image 17 citations pt6:  https://i.etsystatic.com/10139177/r/il/a34636/5257387548/il_fullxfull.5257387548_8c7q.jpg-->
+<!-- Image 17 citations pt7:  https://i.etsystatic.com/19281907/r/il/c57726/2549804144/il_fullxfull.2549804144_mos0.jpg-->
+<img id = "image18" src = "teacherMan.png" hidden>
+<!-- Image 18 citation:  https://static.vecteezy.com/system/resources/previews/012/962/884/original/brown-haired-boy-standing-straight-illustration-in-minimal-style-vector.jpg-->
+<p>The Controls: "W" = Forward, "A" = Left, "D" = Right, "S" = Backwards, "O" = Action Button</p>
+<p>Use Mouse to drag screen, and Spacebar to jump</p>
+<p>Addtionally: Can use left and right arrows to turn 90 degrees in either direction</p>
+</body>
+</html>

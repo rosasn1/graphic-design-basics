@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+<canvas id="gl-canvas" width="512" height="512"> </canvas>
+
+<br><br>
+<button id= "xButton">Rotate X</button>
+<button id= "yButton">Rotate Y</button>
+<button id= "zButton">Rotate Z</button>
+<button id = "ButtonT">Toggle Rotation</button>
+<script id="vertex-shader" type="x-shader/x-vertex">
+#version 300 es
+
+uniform mat4 modelViewMatrix;
+in  vec4 aPosition;
+in  vec4 aColor;
+out vec4 vColor;
+
+void main()
+{
+    vColor = aColor;
+	gl_Position = modelViewMatrix * aPosition;
+    gl_Position.z = -gl_Position.z;
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+#version 300 es
+
+precision mediump float;
+
+in vec4 vColor;
+out vec4 fColor;
+
+void
+main()
+{
+    fColor = vColor;
+}
+</script>
+
+<script src="../Common/initShaders.js"></script>
+<script src="../Common/MV.js"></script>
+<script src="cubeRot2.js"></script>
+
+</body>
+</html>
