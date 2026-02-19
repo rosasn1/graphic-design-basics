@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+<canvas id="gl-canvas" width="512" height="512"> </canvas>
+
+<br><br>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+#version 300 es
+
+
+in vec4 aPosition;
+in vec4 aColor;
+in vec2 aTexCoord;
+
+out vec4 vColor;
+out vec2 vTexCoord;
+
+uniform mat4 uModelMatrix;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+
+void main()
+{
+    vColor = aColor;
+	vTexCoord = aTexCoord;
+	gl_Position = projectionMatrix*modelViewMatrix * aPosition;
+	
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+#version 300 es
+
+precision mediump float;
+
+in vec4 vColor;
+in vec2 vTexCoord;
+out vec4 fColor;
+uniform sampler2D uTextureMap;
+uniform bool useTexture;
+
+void
+main()
+{
+	if (useTexture) {
+        fColor = texture(uTextureMap, vTexCoord);  // Use texture
+    } else {
+        fColor = vColor;  // Use color
+    }
+}
+</script>
+
+<script src="../Common/initShaders.js"></script>
+<script src="../Common/MV.js"></script>
+<script src="program2.js"></script>
+
+<img id = "image1" src = "wallTextureYellow.jpg" hidden>
+<!-- Image 1 citation: https://i.redd.it/a-good-backrooms-wallpaper-texture-2048x2048-v0-z3r799qmmgr91.png?auto=webp&s=98aacd8af376fe07937f6021ef7dcd5f0c92ee90 -->
+<img id = "image3" src = "floorCarpetTexture.jpg" hidden>
+<!--Image 3 citation:  http://incracks.ru/post/backrooms-carpet-texture Reddit - -->
+<img id = "image4" src = "ceilingTexture.png" hidden>
+<!-- Image 4 citation: white-ceiling-with-lighting-in-office-room-bottom-view-picture-id1390606838 (509×339) -->
+<img id = "image5" src = "cabinetFace.jpg" hidden>
+<!-- Image 5 citation: 8,600+ Wood Cabinet Texture Stock Photos, Pictures & Royalty-Free Images - iStock -->
+<img id = "image6" src = "cabinetSides.jpg" hidden>
+<!-- Image 6 citation: Brown wooden 2-door cabinet, wood, texture HD wallpaper | Wallpaper Flare -->
+<img id = "image7" src = "tompic2.png" hidden>
+<!--Image 7 citation: https://web.central.edu/directory/employees/new/index.php -->
+
+</body>
+</html>

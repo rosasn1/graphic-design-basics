@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+#version 300 es
+in vec4 aPosition;
+uniform float uPointSize;
+
+void
+main()
+{
+    gl_Position = aPosition;
+    gl_PointSize = uPointSize;
+
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+#version 300 es
+precision mediump float;
+
+out vec4 fColor;
+uniform float uRed;
+uniform float uBlue;
+uniform float uGreen;
+
+void main()
+{
+    fColor = vec4(uRed, uGreen, uBlue, 1.0 );
+}
+</script>
+
+
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MV.js"></script>
+<script type="text/javascript" src="squareClass.js"></script>
+
+<body>
+<canvas id="gl-canvas" width="512" height="512">>
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+<select id = "mymenu" size = "3">
+    <option value = "0" selected>Red</option>
+    <option value = "1">Green</option>
+    <option value = "2">Blue</option>
+    <option value = "3">Lavender</option>
+    <option value = "4">Black</option>
+    <option value = "5">White</option>
+
+</select>
+<br>
+Red: <input id = "sliderRed" type="range" min="0" max="255" step="5" value="255"><br>
+Green: <input id = "sliderBlue" type="range" min="0" max="255" step="5" value="255"><br>
+Blue: <input id = "sliderGreen" type="range" min="0" max="255" step="5" value="255"><br>
+Point Size: <input id = "sliderPointSize" type="range" min="0" max="30" step="5" value="10">
+
+</body>
+</html>

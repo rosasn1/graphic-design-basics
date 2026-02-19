@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<title>Rotating Square</title>
+</head>
+
+<body>
+<canvas id="gl-canvas" width="512" height="512"> </canvas>
+<script id="vertex-shader" type="x-shader/x-vertex">
+#version 300 es
+
+in vec2 aPosition;
+uniform float uTheta;
+uniform float uRad;
+out vec4 vColor;
+
+void
+main()
+{
+	//compute sine and cosine once
+    float s = sin(uTheta);
+    float c = cos(uTheta);
+
+
+	//performs rotation transformation on x and y
+    gl_Position.x = uRad*(-s*aPosition.y + c*aPosition.x);
+    gl_Position.y =  uRad*(s*aPosition.x + c*aPosition.y);
+    gl_Position.z = 0.0;
+    gl_Position.w = 1.0;
+
+    //vColor = vec4(abs(s), abs(c), .5, 1.0);
+    vColor = vec4(abs(gl_Position.x), abs(gl_Position.y), .5, 1.0);
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+#version 300 es
+precision mediump float;
+
+out vec4 fColor;
+in vec4 vColor;
+
+void
+main()
+{
+    //fColor = vec4(1.0, 0.0, 0.0, 1.0);
+    fColor = vColor;
+}
+</script>
+
+<script src="../Common/initShaders.js"></script>
+<script src="../Common/MV.js"></script>
+<script src="rotatingSquare1.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div>
+<canvas id="gl-canvas" width="512" height="512"> </canvas>
+</div>
+<!------------------------------------------------>
+<p>Vertex Color</p>
+<div style="display: inline-block;">
+    <input type="radio" name="vertexColor" id="colorBlack" value="0" checked> Black<br>
+    <input type="radio" name="vertexColor" id="colorRed" value="1"> Red<br>
+    <input type="radio" name="vertexColor" id="colorYellow" value="2"> Yellow<br>
+    <input type="radio" name="vertexColor" id="colorGreen" value="3"> Green<br>
+    <input type="radio" name="vertexColor" id="colorBlue" value="4"> Blue<br>
+    <input type="radio" name="vertexColor" id="colorMagenta" value="5"> Magenta<br>
+    <input type="radio" name="vertexColor" id="colorCyan" value="6"> Cyan<br>
+</div>
+<!------------------------------------------------>
+<p>Background Color</p>
+<div>Color: <input type=color id=colorPickerBackground></div>
+<div id=res></div>
+<!------------------------------------------------>
+<br>
+Point Size: <input id = "sliderPointSize" type="range" min="0" max="50" step="5" value="10">
+<p>Vertex Type</p>
+<div style="display: inline-block;">
+    <button id="endPolygonButtonPoint" style="display: inline-block; margin-left: 10px;">Point</button>
+    <button id="endPolygonButtonLine" style="display: inline-block; margin-left: 10px;">Line</button>
+    <button id="endPolygonButtonTriangleFan" style="display: inline-block; margin-left: 10px;">Triangle Fan</button>
+    <button id="endPolygonButtonLineStrip" style="display: inline-block; margin-left: 10px;">Line Strip</button>
+    <button id="endPolygonButtonTriangleStrip" style="display: inline-block; margin-left: 10px;">Triangle Strip</button>
+    <button id="clearCanvasButton" style="display: inline-block; margin-left: 10px;">Clear Canvas</button>
+    
+</div>
+<!------------------------------------------------>
+<script id="vertex-shader" type="x-shader/x-vertex">
+#version 300 es
+in vec4 aPosition;
+in vec4 aColor;
+
+out vec4 vColor;
+uniform float uPointSize;
+
+void main()
+{
+    gl_Position = aPosition;
+    gl_PointSize = uPointSize;
+    vColor = aColor;
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+#version 300 es
+precision mediump float;
+
+in vec4 vColor;
+out vec4 fColor;
+
+void main()
+{
+    fColor = vColor;
+}
+</script>
+
+<script src="../Common/initShaders.js"></script>
+<script src="../Common/MV.js"></script>
+<script src="program1.js"></script>
+
+</body>
+</html>
