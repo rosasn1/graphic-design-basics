@@ -30,27 +30,6 @@ Each project folder typically follows this structure:
 - The **HTML file** initializes the canvas and loads required scripts
 - The **JavaScript file** contains the rendering logic, shaders, and interaction (if applicable)
 
-You can copy and reuse the following format to document each project.
-
----
-
-## 📦 Cube
-
-**Folder:** `cube/`
-
-**Description:**  
-This project renders a **3D cube** composed of multiple colored faces, forming a **rainbow-style color scheme**. The cube serves as a basic introduction to 3D geometry, vertex coloring, and rendering using JavaScript and HTML.
-
-**Files:**
-- `cube.html` – Sets up the canvas and loads dependencies
-- `cube.js` – Defines the cube geometry, colors, and rendering logic
-
-**Concepts Demonstrated:**
-- 3D geometry construction
-- Vertex coloring
-- Basic transformations
-- WebGL-style rendering pipeline
-
 ---
 
 ## ⭐ Final Project (Most Important)
@@ -83,7 +62,7 @@ This folder contains the **most important and comprehensive project** in the rep
 
 ## Author
 
-Created by **[Your Name]**  
+Created by **[Nathan Rosas]**  
 Junior Year – College Computer Graphics Coursework
 
 
